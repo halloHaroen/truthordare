@@ -112,7 +112,28 @@
                 console.log('Available Questions:', QUESTIONS[theme][type.toLowerCase()]);
 
                 const questions = QUESTIONS[theme][type.toLowerCase()];
+                const selectQuestionType = (type) => {
+                const currentPlayer = players[currentPlayerIndex];
+                setCurrentQuestionType(type);
+                setIsPassScreen(false);
+            
+                // Add robust error checking
+                if (!QUESTIONS[theme]) {
+                    console.error(`Theme "${theme}" not found`);
+                    return;
+                }
+            
+                const questionKey = type.toLowerCase() + 's'; // Note the 's' to match 'truths' and 'dares'
+                const questions = QUESTIONS[theme][questionKey];
+            
+                if (!questions || questions.length === 0) {
+                    console.error(`No ${type.toLowerCase()} questions found for theme ${theme}`);
+                    return;
+                }
+            
                 const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+                setCurrentQuestion(randomQuestion);
+            };
                 setCurrentQuestion(randomQuestion);
             };
 
