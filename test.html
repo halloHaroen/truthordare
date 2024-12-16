@@ -12,6 +12,10 @@
             background: linear-gradient(135deg, #6dd5ed, #2193b0);
             color: white;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
             max-width: 600px;
@@ -39,13 +43,6 @@
         #truthBtn, #dareBtn {
             background-color: #007BFF;
             color: white;
-        }
-        #passBtn {
-            background-color: #FF5733;
-            color: white;
-            border-radius: 50%;
-            padding: 15px;
-            font-size: 18px;
         }
         #nextBtn {
             background-color: #28a745;
@@ -104,7 +101,6 @@
 
     <div class="dialog hidden" id="dialog">
         <p id="dialogContent"></p>
-        <button id="passBtn">Pass</button>
         <button id="nextBtn">Next</button>
         <button id="backBtn">Back</button>
     </div>
@@ -181,18 +177,13 @@
             document.getElementById('dialog').classList.remove('hidden');
         }
 
-        document.getElementById('passBtn').addEventListener('click', () => {
-            const alternative = theme === 'General' ?
-                "Tell a joke to the group." :
-                "Collect 3 pieces of trash.";
-            document.getElementById('dialogContent').textContent = `To pass, you must: ${alternative}`;
-        });
-
         document.getElementById('nextBtn').addEventListener('click', () => {
             currentPlayerIndex++;
             if (currentPlayerIndex >= players.length * questionsLimit) {
                 alert('Game over! Thanks for playing.');
-                location.reload();
+                document.getElementById('setupScreen').classList.remove('hidden');
+                document.getElementById('gameScreen').classList.add('hidden');
+                document.getElementById('dialog').classList.add('hidden');
             } else {
                 updateQuestionHeader();
                 document.getElementById('dialog').classList.add('hidden');
