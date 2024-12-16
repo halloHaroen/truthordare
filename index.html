@@ -104,38 +104,47 @@
             };
 
             const selectQuestionType = (type) => {
-                const currentPlayer = players[currentPlayerIndex];
-                setCurrentQuestionType(type);
-                setIsPassScreen(false);
+    const currentPlayer = players[currentPlayerIndex];
+    setCurrentQuestionType(type);
+    setIsPassScreen(false);
 
-                // Debug: Log the available questions
-                console.log('Available Questions:', QUESTIONS[theme][type.toLowerCase()]);
+    // Ensure type is correctly formatted
+    const questionKey = type.toLowerCase() + 's'; // 'truths' or 'dares'
 
-                const questions = QUESTIONS[theme][type.toLowerCase()];
-                const selectQuestionType = (type) => {
-                const currentPlayer = players[currentPlayerIndex];
-                setCurrentQuestionType(type);
-                setIsPassScreen(false);
-            
-                // Add robust error checking
-                if (!QUESTIONS[theme]) {
-                    console.error(`Theme "${theme}" not found`);
-                    return;
-                }
-            
-                const questionKey = type.toLowerCase() + 's'; // Note the 's' to match 'truths' and 'dares'
-                const questions = QUESTIONS[theme][questionKey];
-            
-                if (!questions || questions.length === 0) {
-                    console.error(`No ${type.toLowerCase()} questions found for theme ${theme}`);
-                    return;
-                }
-            
-                const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-                setCurrentQuestion(randomQuestion);
-            };
-                setCurrentQuestion(randomQuestion);
-            };
+    try {
+        // Verify theme exists
+        if (!QUESTIONS[theme]) {
+            console.error(`Theme "${theme}" not found`);
+            alert(`Error: Theme "${theme}" not found`);
+            return;
+        }
+
+        // Verify questions exist for this type
+        const questions = QUESTIONS[theme][questionKey];
+        
+        if (!questions || questions.length === 0) {
+            console.error(`No ${questionKey} found for theme ${theme}`);
+            alert(`No questions available for ${type}`);
+            return;
+        }
+
+        // Select a random question
+        const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+        
+        // Ensure a question is selected
+        if (!randomQuestion) {
+            console.error('Failed to select a random question');
+            alert('Unable to select a question');
+            return;
+        }
+
+        // Set the current question
+        setCurrentQuestion(randomQuestion);
+    } catch (error) {
+        console.error('Error in selectQuestionType:', error);
+        alert('An unexpected error occurred');
+    }
+};
 
             const handlePass = () => {
                 setIsPassScreen(true);
