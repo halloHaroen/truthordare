@@ -40,7 +40,7 @@
             background-color: #4CAF50;
             color: white;
         }
-        #truthBtn, #dareBtn {
+        #truthBtn, #dareBtn, #passBtn {
             background-color: #007BFF;
             color: white;
         }
@@ -97,6 +97,7 @@
         <h2 id="questionHeader"></h2>
         <button id="truthBtn">Truth</button>
         <button id="dareBtn">Dare</button>
+        <button id="passBtn">Pass</button>
     </div>
 
     <div class="dialog hidden" id="dialog">
@@ -172,6 +173,12 @@
             showDialog(getRandomQuestion(dares));
         });
 
+        document.getElementById('passBtn').addEventListener('click', () => {
+            const alternativeAction = theme === 'General' ? "Do 20 jumping jacks." : "Collect three pieces of trash.";
+            showDialog(alternativeAction);
+            document.getElementById('passBtn').classList.add('hidden');
+        });
+
         function showDialog(content) {
             document.getElementById('dialogContent').textContent = content;
             document.getElementById('dialog').classList.remove('hidden');
@@ -184,14 +191,17 @@
                 document.getElementById('setupScreen').classList.remove('hidden');
                 document.getElementById('gameScreen').classList.add('hidden');
                 document.getElementById('dialog').classList.add('hidden');
+                document.getElementById('passBtn').classList.remove('hidden');
             } else {
                 updateQuestionHeader();
                 document.getElementById('dialog').classList.add('hidden');
+                document.getElementById('passBtn').classList.remove('hidden');
             }
         });
 
         document.getElementById('backBtn').addEventListener('click', () => {
             document.getElementById('dialog').classList.add('hidden');
+            document.getElementById('passBtn').classList.remove('hidden');
         });
     </script>
 </body>
