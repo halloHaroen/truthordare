@@ -1,52 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Truth or Dare</title>
-  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truth or Dare Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #startBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #truthBtn, #dareBtn {
+            background-color: #007BFF;
+            color: white;
+        }
+        #passBtn {
+            background-color: #FF5733;
+            color: white;
+            border-radius: 50%;
+            padding: 15px;
+            font-size: 18px;
+        }
+        #nextBtn {
+            background-color: #28a745;
+            color: white;
+        }
+        .dialog {
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #backBtn {
+            background-color: #FFC107;
+            color: black;
+        }
+    </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const questions = {
-      truth: ["What is your biggest fear?", "Have you ever lied to a friend?"],
-      dare: ["Do 10 push-ups!", "Sing a song loudly!"]
-    };
+    <div class="container" id="setupScreen">
+        <h1>Welcome to Truth or Dare!</h1>
+        <form id="setupForm">
+            <label>Player 1: <input type="text" id="player1" required></label><br>
+            <label>Player 2: <input type="text" id="player2" required></label><br>
+            <label>Player 3: <input type="text" id="player3"></label><br>
+            <label>Player 4: <input type="text" id="player4"></label><br><br>
 
-    function selectQuestionType(type) {
-      if (!questions[type] || questions[type].length === 0) {
-        console.error(`No questions available for type: ${type}`);
-        alert(`No questions available for ${type}`);
-        return null;
-      }
-      const randomIndex = Math.floor(Math.random() * questions[type].length);
-      return questions[type][randomIndex];
-    }
+            <label>Theme:
+                <select id="theme" required>
+                    <option value="General">General</option>
+                    <option value="Outdoor">Outdoor</option>
+                </select>
+            </label><br><br>
 
-    function App() {
-      const [question, setQuestion] = React.useState("");
+            <label>Questions per Player:
+                <select id="questionsPerPlayer" required>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="40">40</option>
+                </select>
+            </label><br><br>
 
-      function handleSelect(type) {
-        const selectedQuestion = selectQuestionType(type);
-        if (selectedQuestion) {
-          setQuestion(selectedQuestion);
+            <button type="button" id="startBtn">Start Game</button>
+        </form>
+    </div>
+
+    <div class="container hidden" id="gameScreen">
+        <h2 id="questionHeader"></h2>
+        <button id="truthBtn">Truth</button>
+        <button id="dareBtn">Dare</button>
+    </div>
+
+    <div class="dialog hidden" id="dialog">
+        <p id="dialogContent"></p>
+        <button id="passBtn">Pass</button>
+        <button id="nextBtn">Next</button>
+        <button id="backBtn">Back</button>
+    </div>
+
+    <script>
+        const players = [];
+        let currentPlayerIndex = 0;
+        let questionsLimit;
+        let theme;
+        const generalTruths = [
+            "What's your most embarrassing moment?",
+            "Who was your first crush?",
+            "What's a secret you've never told anyone?",
+        ];
+        const generalDares = [
+            "Sing a song of your choice.",
+            "Do 10 push-ups.",
+            "Post something silly on your social media.",
+        ];
+        const outdoorTruths = [
+            "What's the weirdest thing you've seen outdoors?",
+            "Have you ever gotten lost?",
+            "What's your favorite outdoor memory?",
+        ];
+        const outdoorDares = [
+            "Run around the yard shouting 'I love nature!'",
+            "Do a tree pose for 30 seconds.",
+            "Pick up three pieces of trash and show them.",
+        ];
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            const playerInputs = [
+                document.getElementById('player1').value.trim(),
+                document.getElementById('player2').value.trim(),
+                document.getElementById('player3').value.trim(),
+                document.getElementById('player4').value.trim()
+            ];
+            players.push(...playerInputs.filter(name => name));
+
+            if (players.length < 2) {
+                alert('Please enter at least two players!');
+                return;
+            }
+
+            theme = document.getElementById('theme').value;
+            questionsLimit = parseInt(document.getElementById('questionsPerPlayer').value);
+
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            updateQuestionHeader();
+        });
+
+        function updateQuestionHeader() {
+            const currentPlayer = players[currentPlayerIndex % players.length];
+            document.getElementById('questionHeader').textContent = `Truth or Dare: ${currentPlayer}`;
         }
-      }
 
-      return (
-        <div className="game">
-          <h1>Truth or Dare</h1>
-          <button onClick={() => handleSelect("truth")}>Truth</button>
-          <button onClick={() => handleSelect("dare")}>Dare</button>
-          {question && <p>{question}</p>}
-        </div>
-      );
-    }
+        function getRandomQuestion(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
 
-    ReactDOM.render(<App />, document.getElementById("root"));
-  </script>
+        document.getElementById('truthBtn').addEventListener('click', () => {
+            const questions = theme === 'General' ? generalTruths : outdoorTruths;
+            showDialog(getRandomQuestion(questions));
+        });
+
+        document.getElementById('dareBtn').addEventListener('click', () => {
+            const dares = theme === 'General' ? generalDares : outdoorDares;
+            showDialog(getRandomQuestion(dares));
+        });
+
+        function showDialog(content) {
+            document.getElementById('dialogContent').textContent = content;
+            document.getElementById('dialog').classList.remove('hidden');
+        }
+
+        document.getElementById('passBtn').addEventListener('click', () => {
+            const alternative = theme === 'General' ?
+                "Tell a joke to the group." :
+                "Collect 3 pieces of trash.";
+            document.getElementById('dialogContent').textContent = `To pass, you must: ${alternative}`;
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            currentPlayerIndex++;
+            if (currentPlayerIndex >= players.length * questionsLimit) {
+                alert('Game over! Thanks for playing.');
+                location.reload();
+            } else {
+                updateQuestionHeader();
+                document.getElementById('dialog').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+            document.getElementById('dialog').classList.add('hidden');
+        });
+    </script>
 </body>
 </html>
