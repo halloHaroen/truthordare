@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Truth or Dare</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const questions = {
+      truth: ["What is your biggest fear?", "Have you ever lied to a friend?"],
+      dare: ["Do 10 push-ups!", "Sing a song loudly!"]
+    };
+
+    function selectQuestionType(type) {
+      if (!questions[type] || questions[type].length === 0) {
+        console.error(`No questions available for type: ${type}`);
+        alert(`No questions available for ${type}`);
+        return null;
+      }
+      const randomIndex = Math.floor(Math.random() * questions[type].length);
+      return questions[type][randomIndex];
+    }
+
+    function App() {
+      const [question, setQuestion] = React.useState("");
+
+      function handleSelect(type) {
+        const selectedQuestion = selectQuestionType(type);
+        if (selectedQuestion) {
+          setQuestion(selectedQuestion);
+        }
+      }
+
+      return (
+        <div className="game">
+          <h1>Truth or Dare</h1>
+          <button onClick={() => handleSelect("truth")}>Truth</button>
+          <button onClick={() => handleSelect("dare")}>Dare</button>
+          {question && <p>{question}</p>}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</body>
+</html>
