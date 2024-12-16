@@ -38,24 +38,14 @@
                     "What's a secret you've never told anyone?",
                     "What's your biggest fear?",
                     "Who in this room do you have a crush on?",
-                    "What's the biggest lie you've ever told?",
-                    "What's the most bizarre dream you've had?",
-                    "What's something you've done that you hope no one ever finds out about?",
-                    "What's the most awkward date you've been on?",
-                    "What's a talent you wish you had?",
-                    "If you could swap lives with anyone for a day, who would it be?"
+                    "What's the biggest lie you've ever told?"
                 ],
                 dares: [
                     "Take a selfie with the weirdest facial expression possible",
                     "Do your best impression of another player",
                     "Call a friend and sing them a love song",
                     "Post something embarrassing on social media",
-                    "Dance without music for 30 seconds",
-                    "Let another player draw on your face with a marker",
-                    "Do a TikTok dance in front of everyone",
-                    "Eat a spoonful of something spicy",
-                    "Send a ridiculous text to your last contact",
-                    "Wear your clothes backwards for the next round"
+                    "Dance without music for 30 seconds"
                 ]
             },
             Outdoor: {
@@ -64,26 +54,21 @@
                     "Have you ever gotten lost while hiking?",
                     "What's your favorite outdoor activity?",
                     "Tell a story about a camping trip gone wrong",
-                    "What's the most beautiful natural place you've ever visited?",
-                    "Have you ever been camping?",
-                    "What outdoor skill do you wish you had?",
-                    "What's the longest hike you've ever done?",
-                    "Do you prefer beaches or mountains?",
-                    "What's an outdoor activity that scares you?"
+                    "What's the most beautiful natural place you've ever visited?"
                 ],
                 dares: [
                     "Do 10 jumping jacks",
                     "Walk like a penguin for a full minute",
                     "Find and collect 3 pieces of trash",
                     "Do a cartwheel",
-                    "Climb a tree (safely)",
-                    "Run around the block",
-                    "Do a bear crawl for 10 meters",
-                    "Spin around 5 times and try to walk in a straight line",
-                    "Do push-ups outside",
-                    "Make an animal sound and imitate its movement"
+                    "Climb a tree (safely)"
                 ]
             }
+        };
+
+        const PASS_MESSAGES = {
+            General: "To pass this challenge, you must do a funny dance in front of everyone!",
+            Outdoor: "To pass this challenge, you must collect 3 pieces of trash from outside!"
         };
 
         const App = () => {
@@ -95,6 +80,7 @@
             const [currentQuestionType, setCurrentQuestionType] = React.useState(null);
             const [currentQuestion, setCurrentQuestion] = React.useState('');
             const [questionCounts, setQuestionCounts] = React.useState({});
+            const [isPassScreen, setIsPassScreen] = React.useState(false);
 
             const updatePlayerName = (index, name) => {
                 const newPlayers = [...players];
@@ -127,6 +113,10 @@
                 setCurrentQuestion(randomQuestion);
             };
 
+            const handlePass = () => {
+                setIsPassScreen(true);
+            };
+
             const nextTurn = () => {
                 const activePlayers = players.filter(player => player.trim() !== '');
                 
@@ -151,6 +141,7 @@
                 setCurrentPlayerIndex(nextIndex);
                 setCurrentQuestionType(null);
                 setQuestionCounts(newQuestionCounts);
+                setIsPassScreen(false);
             };
 
             const renderSetupScreen = () => (
@@ -219,14 +210,34 @@
                                 Dare
                             </button>
                         </div>
+                    ) : isPassScreen ? (
+                        <div>
+                            <p className="text-center mb-4 font-semibold text-red-600">
+                                {PASS_MESSAGES[theme]}
+                            </p>
+                            <div className="flex space-x-4">
+                                <button 
+                                    onClick={() => setIsPassScreen(false)}
+                                    className="w-1/2 py-3 border rounded-md bg-gray-50 hover:bg-gray-100 transition duration-300"
+                                >
+                                    Back
+                                </button>
+                                <button 
+                                    onClick={nextTurn}
+                                    className="w-1/2 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
                     ) : (
                         <div>
                             <p className="mb-4 text-center font-semibold">{currentQuestionType}:</p>
                             <p className="text-center mb-4">{currentQuestion}</p>
                             <div className="flex space-x-4">
                                 <button 
-                                    onClick={() => setCurrentQuestionType(null)}
-                                    className="w-1/2 py-3 border rounded-md bg-gray-50 hover:bg-gray-100 transition duration-300"
+                                    onClick={handlePass}
+                                    className="w-1/2 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
                                 >
                                     Pass
                                 </button>
