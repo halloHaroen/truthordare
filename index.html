@@ -30,7 +30,6 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // Question banks
         const QUESTIONS = {
             General: {
                 truths: [
@@ -107,6 +106,10 @@
             const selectQuestionType = (type) => {
                 const currentPlayer = players[currentPlayerIndex];
                 setCurrentQuestionType(type);
+                setIsPassScreen(false);
+
+                // Debug: Log the available questions
+                console.log('Available Questions:', QUESTIONS[theme][type.toLowerCase()]);
 
                 const questions = QUESTIONS[theme][type.toLowerCase()];
                 const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
@@ -233,7 +236,7 @@
                     ) : (
                         <div>
                             <p className="mb-4 text-center font-semibold">{currentQuestionType}:</p>
-                            <p className="text-center mb-4">{currentQuestion}</p>
+                            <p className="text-center mb-4 min-h-[100px]">{currentQuestion}</p>
                             <div className="flex space-x-4">
                                 <button 
                                     onClick={handlePass}
