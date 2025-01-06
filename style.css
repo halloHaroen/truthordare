@@ -13,6 +13,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     text-align: center;
+    position: relative; /* Add this to allow absolute positioning of the version */
 }
 
 input, select, button {
@@ -48,6 +49,18 @@ input, select, button {
     cursor: pointer;
     border-radius: 4px;
 }
+
 #buttons button:hover{
   background-color: #367c39;
+}
+/* Add the new style*/
+.button-container {
+  display: inline-block;
+}
+.version {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+    font-size: 0.8em;
+    color: #999;
 }
