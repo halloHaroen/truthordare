@@ -44,36 +44,29 @@ function addPlayerInput() {
     const playerInputs = playersContainer.querySelectorAll(".playerName");
     if (playerInputs.length < maxPlayers) {
         const newInput = document.createElement("input");
-        // ... (Set input attributes - same as before)
+        newInput.type = "text";
+        newInput.className = "playerName";
+        newInput.placeholder = `Player ${playerInputs.length + 1}`;
+        newInput.required = true;
+        newInput.minlength = "3";
+        newInput.maxlength = "20";
         playersContainer.appendChild(newInput);
     }
 }
 
 
-async function startGame() {
-    //  Get the player names *after* the Add Player button might have been clicked
-    const playerNames = Array.from(document.querySelectorAll('.playerName'))
-        .map(input => input.value.trim())
-        .filter(name => name !== ''); // Filter out empty names
-
-
-    if (playerNames.length < 2) {
-        alert("Please enter at least two player names.");
-        return;  // Stop execution if not enough players
+function addPlayerInput() {
+    const playerInputs = playersContainer.querySelectorAll(".playerName");
+    if (playerInputs.length < maxPlayers) {
+        const newInput = document.createElement("input");
+        newInput.type = "text";
+        newInput.className = "playerName"; //  <--- ADD THIS LINE
+        newInput.placeholder = `Player ${playerInputs.length + 1}`;
+        newInput.required = true;
+        newInput.minlength = "3";
+        newInput.maxlength = "20";
+        playersContainer.appendChild(newInput);
     }
-
-    const themeName = themeSelect.value;
-    const questionLimit = parseInt(questionLimitSelect.value, 10);
-
-
-    const themeLoaded = await themeManager.loadTheme(themeName);
-    if (!themeLoaded) {
-        alert(`Error loading ${themeName} theme.`);
-        return;
-    }
-
-    gameManager.setupGame(playerNames, themeName, questionLimit);
-    showChoiceScreen();
 }
 
 
