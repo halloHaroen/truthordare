@@ -1,0 +1,52 @@
+{
+    "truths": [
+      { "text": "What's your biggest fear?", "target": null },
+      { "text": "Have you ever lied to someone?", "target": null },
+      { "text": "Have you ever had a crush on {{player}}?", "target": "player" },
+      { "text": "What's your most embarrassing moment?", "target": null },
+      { "text": "What's the most illegal thing you've ever done?", "target": null },
+      { "text": "What's a habit you'd like to break?", "target": null },
+      { "text": "What's something you're secretly proud of?", "target": null },
+      { "text": "What's the worst job you've ever had?", "target": null },
+      { "text": "What's your biggest regret?", "target": null },
+      { "text": "Have you ever stolen anything?", "target": null },
+        { "text": "What's the silliest thing you've ever done?", "target": null },
+      { "text": "Who do you think is the most stylish here?", "target": null },
+      { "text": "When was the last time you cried and why?", "target": null },
+      { "text": "Who is the player you dislike the most?", "target": "player" },
+      { "text": "What is the most daring thing you've ever done?", "target": null },
+      { "text": "What is your worst nightmare?", "target": null },
+        { "text": "Have you ever cheated on a test?", "target": null },
+          { "text": "If you could have any superpower, what would it be?", "target": null },
+          { "text": "What's the weirdest thing you've ever eaten?", "target": null },
+      { "text": "What's a secret you've never told anyone?", "target": null }
+  
+    ],
+    "dares": [
+        { "text": "Do 10 jumping jacks.", "target": null },
+      { "text": "Sing a song loudly.", "target": null },
+       { "text": "Give {{player}} a compliment.", "target": "player" },
+       { "text": "Act like a chicken for 30 seconds.", "target": null },
+      { "text": "Do your best impression of a celebrity.", "target": null },
+      { "text": "Do a silly walk around the room.", "target": null },
+      { "text": "Tell a joke.", "target": null },
+      { "text": "Eat something without using your hands.", "target": null },
+      { "text": "Let the other players choose a hairstyle for you.", "target": null },
+      { "text": "Draw something on the face of the player on your right.", "target": "player" },
+        { "text": "Call someone and tell them a joke", "target": null },
+        { "text": "Try to make a funny face for 15 seconds", "target": null },
+       { "text": "Pretend to be a monkey for a minute.", "target": null },
+      { "text": "Speak in an accent for the rest of the round.", "target": null },
+      { "text": "Do 5 pushups.", "target": null },
+       { "text": "Imitate your favourite animal.", "target": null },
+        { "text": "Dance like nobody's watching.", "target": null },
+      { "text": "Give a piggyback ride to the player on your left.", "target": "player" },
+        { "text": "Let another player draw on your forehead.", "target": "player" },
+        { "text": "Tell your best joke while you make a crazy expression", "target": null }
+    ],
+   "passes": [
+          "Do a silly dance for 15 seconds.",
+          "Tell a joke.",
+          "Do 5 pushups."
+      ]
+  }
