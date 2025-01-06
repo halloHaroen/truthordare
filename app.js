@@ -51,13 +51,15 @@ function addPlayerInput() {
 
 
 async function startGame() {
+    //  Get the player names *after* the Add Player button might have been clicked
     const playerNames = Array.from(document.querySelectorAll('.playerName'))
         .map(input => input.value.trim())
-        .filter(name => name !== '');
+        .filter(name => name !== ''); // Filter out empty names
+
 
     if (playerNames.length < 2) {
         alert("Please enter at least two player names.");
-        return;
+        return;  // Stop execution if not enough players
     }
 
     const themeName = themeSelect.value;
