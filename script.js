@@ -90,15 +90,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Start a new player's turn
-    function startNewTurn() {
-        currentPlayerDisplay.textContent = `Current Player: ${players[currentPlayerIndex]}`;
-        truthButton.style.display = 'inline-block';
-        dareButton.style.display = 'inline-block';
-        passButton.style.display = 'none';
+     function startNewTurn() {
+         currentPlayerDisplay.textContent = `Current Player: ${players[currentPlayerIndex]}`;
+         truthButton.style.display = 'inline-block';
+         dareButton.style.display = 'inline-block';
+         passButton.style.display = 'none';
         currentQuestionDisplay.textContent = "Select Truth or Dare";
         nextPlayerButton.style.display = 'none';
         buttonsDiv.style.display = 'inline-block';
+        nextPlayerButton.textContent = 'Next Player'; // Reset Next Player text
     }
+
 
    // Check if player has reached the question limit
     function checkPlayerQuestionLimit(){
@@ -117,50 +119,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Truth logic
     truthButton.addEventListener('click', () => {
-        if(checkPlayerQuestionLimit()){
-         return;
-        }
+         if(checkPlayerQuestionLimit()){
+             return;
+         }
        showTruthOrDare('truths');
        truthButton.style.display = 'none';
         dareButton.style.display = 'none';
         passButton.style.display = 'inline-block';
-        nextPlayerButton.style.display = 'inline-block';
+       nextPlayerButton.style.display = 'inline-block';
     });
 
     // Dare logic
     dareButton.addEventListener('click', () => {
         if(checkPlayerQuestionLimit()){
-           return;
+             return;
         }
         showTruthOrDare('dares');
         truthButton.style.display = 'none';
         dareButton.style.display = 'none';
-       passButton.style.display = 'inline-block';
-        nextPlayerButton.style.display = 'inline-block';
+        passButton.style.display = 'inline-block';
+       nextPlayerButton.style.display = 'inline-block';
    });
 
     // Pass Logic
     passButton.addEventListener('click', () => {
           if(checkPlayerQuestionLimit()){
-           return;
-        }
+              return;
+          }
          showPassAction();
           truthButton.style.display = 'none';
         dareButton.style.display = 'none';
-        passButton.style.display = 'none';
+       passButton.style.display = 'none';
         nextPlayerButton.style.display = 'inline-block';
    });
 
     // Next player Logic
     nextPlayerButton.addEventListener('click', () => {
-        if(checkPlayerQuestionLimit()){
-             currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-              if (isGameOver()) {
-                showGameSummary();
-                return;
-              }
-         }
-          startNewTurn();
+        if (checkPlayerQuestionLimit()) {
+            currentPlayerIndex++; // Move to the next player only if the current player has finished
+        }
+
+        if(currentPlayerIndex >= players.length){
+            currentPlayerIndex = 0;
+        }
+
+      if (isGameOver()) {
+          showGameSummary();
+          return;
+       }
+
+
+      startNewTurn();
 
     });
 
@@ -175,10 +184,9 @@ document.addEventListener('DOMContentLoaded', () => {
          return true;
       }
 
-
     // Show the action (truth or dare)
     function showTruthOrDare(type) {
-        const currentPlayerName = players[currentPlayerIndex];
+         const currentPlayerName = players[currentPlayerIndex];
         const items = questions[type];
        let availableQuestions = items.filter((item, index) => !gameData[currentPlayerName].usedQuestions.includes(`${type}-${index}`));
 
@@ -188,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const randomIndex = Math.floor(Math.random() * availableQuestions.length);
         const randomItem = availableQuestions[randomIndex];
-        const questionIndex = items.indexOf(randomItem);
+         const questionIndex = items.indexOf(randomItem);
          let text = randomItem.text;
 
         if (randomItem.target === "player") {
