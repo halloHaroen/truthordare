@@ -27,7 +27,7 @@ const currentPlayerSpan = document.getElementById("currentPlayer");
 const versionNumberSpan = document.getElementById("versionNumber");
 const choicePlayerName = document.getElementById("choicePlayerName");
 const currentQuestionNumber = document.getElementById("currentQuestionNumber");
-
+const passActionNextPlayerButton = document.getElementById("passActionNextPlayerButton"); 
 
 
 // --- Event Listeners ---
@@ -37,7 +37,7 @@ truthButton.addEventListener("click", showQuestion);
 dareButton.addEventListener("click", showQuestion);
 passButton.addEventListener("click", showPassAction);
 nextPlayerButton.addEventListener("click", nextPlayer);
-
+passActionNextPlayerButton.addEventListener("click", nextPlayer);
 
 
 // --- Functions ---
@@ -100,13 +100,25 @@ function showQuestion(event) {
 function showPassAction() {
     passActionText.textContent = gameManager.getPassAction();
     passActionScreen.style.display = "block";
-    questionScreen.classList.add("grayed-out"); 
+    questionScreen.classList.add("grayed-out");
+
+
+    // Hide the original Next Player button and show the one on the pass screen
+    nextPlayerButton.style.display = "none";  // Original button on question screen
+    passActionNextPlayerButton.style.display = "block"; // Button on pass action screen
+
 }
 
 function nextPlayer() {
-    passActionScreen.style.display = "none"; 
-    questionScreen.classList.remove("grayed-out"); 
+    passActionScreen.style.display = "none";
+    questionScreen.classList.remove("grayed-out");
     questionScreen.style.display = "none";
+
+    // Show the original next player button again (for the next turn)
+    nextPlayerButton.style.display = "block";
+    passActionNextPlayerButton.style.display = "none"; // Hide the pass screen button
+
+
 
     gameManager.nextPlayer();
     if (gameManager.isGameOver()) {
