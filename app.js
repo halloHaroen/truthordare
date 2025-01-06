@@ -29,6 +29,7 @@ const choicePlayerName = document.getElementById("choicePlayerName");
 const currentQuestionNumber = document.getElementById("currentQuestionNumber");
 
 
+
 // --- Event Listeners ---
 addPlayerButton.addEventListener("click", addPlayerInput);
 startGameButton.addEventListener("click", startGame);
@@ -45,7 +46,7 @@ function addPlayerInput() {
     if (playerInputs.length < maxPlayers) {
         const newInput = document.createElement("input");
         newInput.type = "text";
-        newInput.className = "playerName";
+        newInput.className = "playerName"; 
         newInput.placeholder = `Player ${playerInputs.length + 1}`;
         newInput.required = true;
         newInput.minlength = "3";
@@ -54,22 +55,28 @@ function addPlayerInput() {
     }
 }
 
+async function startGame() {
+    const playerNames = Array.from(document.querySelectorAll('.playerName'))
+        .map(input => input.value.trim())
+        .filter(name => name !== '');
 
-function addPlayerInput() {
-    const playerInputs = playersContainer.querySelectorAll(".playerName");
-    if (playerInputs.length < maxPlayers) {
-        const newInput = document.createElement("input");
-        newInput.type = "text";
-        newInput.className = "playerName"; //  <--- ADD THIS LINE
-        newInput.placeholder = `Player ${playerInputs.length + 1}`;
-        newInput.required = true;
-        newInput.minlength = "3";
-        newInput.maxlength = "20";
-        playersContainer.appendChild(newInput);
+    if (playerNames.length < 2) {
+        alert("Please enter at least two player names.");
+        return;
     }
+
+    const themeName = themeSelect.value;
+    const questionLimit = parseInt(questionLimitSelect.value, 10);
+
+    const themeLoaded = await themeManager.loadTheme(themeName);
+    if (!themeLoaded) {
+        alert(`Error loading ${themeName} theme.`);
+        return;
+    }
+
+    gameManager.setupGame(playerNames, themeName, questionLimit);
+    showChoiceScreen();
 }
-
-
 
 function showChoiceScreen() {
     setupScreen.style.display = "none";
@@ -79,10 +86,7 @@ function showChoiceScreen() {
 
     choicePlayerName.textContent = `${currentPlayer}: `;
     currentQuestionNumber.textContent = `${questionCount + 1}/${gameManager.questionLimit}`;
-
 }
-
-
 
 function showQuestion(event) {
     const questionType = event.target.id === "truthButton" ? "truths" : "dares";
@@ -93,18 +97,15 @@ function showQuestion(event) {
     questionScreen.style.display = "block";
 }
 
-
 function showPassAction() {
     passActionText.textContent = gameManager.getPassAction();
     passActionScreen.style.display = "block";
-    questionScreen.classList.add("grayed-out");
+    questionScreen.classList.add("grayed-out"); 
 }
 
-
-
 function nextPlayer() {
-    passActionScreen.style.display = "none";
-    questionScreen.classList.remove("grayed-out");
+    passActionScreen.style.display = "none"; 
+    questionScreen.classList.remove("grayed-out"); 
     questionScreen.style.display = "none";
 
     gameManager.nextPlayer();
@@ -115,17 +116,14 @@ function nextPlayer() {
     }
 }
 
-
-
-
 function showResultsScreen() {
-    resultsTableBody.innerHTML = ""; 
+    resultsTableBody.innerHTML = "";
 
     gameManager.players.forEach(player => {
         const playerStats = gameManager.askedQuestions[player];
         const truths = playerStats.truths.length;
         const dares = playerStats.dares.length;
-        const passes = gameManager.questionLimit - truths - dares; 
+        const passes = gameManager.questionLimit - truths - dares;
 
         const row = resultsTableBody.insertRow();
         const playerCell = row.insertCell();
@@ -140,24 +138,24 @@ function showResultsScreen() {
     });
 
     questionScreen.style.display = "none";
-    choiceScreen.style.display = "none";
+    choiceScreen.style.display = "none"; 
     resultsScreen.style.display = "block";
 }
-
 
 
 // --- Initialization ---
 versionNumberSpan.textContent = version;
 
-// Populate theme dropdown
-themeManager.loadTheme("general").then(() => { // You can add more themes here. The names need to match your JSON file names
-  themeManager.loadTheme("outdoor").then(() => {
-    const themes = themeManager.getAvailableThemes();
+
+themeManager.loadTheme("general").then(() => { // Make sure these match your theme JSON file names
+    themeManager.loadTheme("outdoor").then(() => {
+        const themes = themeManager.getAvailableThemes();
         themes.forEach(theme => {
             const option = document.createElement("option");
             option.value = theme;
             option.textContent = theme;
             themeSelect.appendChild(option);
         });
-  });
+    });
+
 });
