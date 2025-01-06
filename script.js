@@ -92,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start a new player's turn
     function startNewTurn() {
         currentPlayerDisplay.textContent = `Current Player: ${players[currentPlayerIndex]}`;
-        truthButton.disabled = false;
-        dareButton.disabled = false;
+        truthButton.style.display = 'inline-block';
+        dareButton.style.display = 'inline-block';
         passButton.style.display = 'none';
         currentQuestionDisplay.textContent = "Select Truth or Dare";
         nextPlayerButton.style.display = 'none';
@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
        truthButton.style.display = 'none';
         dareButton.style.display = 'none';
         passButton.style.display = 'inline-block';
+        nextPlayerButton.style.display = 'inline-block';
     });
 
     // Dare logic
@@ -135,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         truthButton.style.display = 'none';
         dareButton.style.display = 'none';
        passButton.style.display = 'inline-block';
+        nextPlayerButton.style.display = 'inline-block';
    });
 
     // Pass Logic
@@ -157,11 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 showGameSummary();
                 return;
               }
-         }else{
-           startNewTurn();
          }
-
-        startNewTurn();
+          startNewTurn();
 
     });
 
