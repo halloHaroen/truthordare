@@ -1,0 +1,27 @@
+/* style.css */
+body {
+    font-family: sans-serif;
+  }
+  
+  .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  #passButton {
+      background-color: red;
+      color: white;
+  }
+  
+  #questionScreen.grayed-out {
+      filter: grayscale(0.7);
+      pointer-events: none;
+  }
+  
+  /* Add more styles as needed */

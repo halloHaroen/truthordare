@@ -1,299 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truth or Dare Game</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#3B82F6',
-                            foreground: 'white'
-                        },
-                        muted: {
-                            foreground: '#6B7280'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Truth or Dare</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="root"></div>
+    <header>
+        <h1>Truth or Dare</h1>
+        <span id="currentPlayer"></span>
+    </header>
+    <main id="gameContent">
+        <div id="setupScreen">
+            <h2>Setup Game</h2>
+            <label for="themeSelect">Theme:</label>
+            <select id="themeSelect"></select>
+            <label for="questionLimit">Question Limit:</label>
+            <select id="questionLimit">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+            <div id="playersContainer">
+                <input type="text" class="playerName" placeholder="Player 1" required minlength="3" maxlength="20">
+            </div>
+            <button id="addPlayerButton">Add Player</button>
+            <button id="startGameButton">Start Game</button>
+        </div>
 
-    <script type="text/babel">
-        const QUESTIONS = {
-            General: {
-                truths: [
-                    "What's the most embarrassing thing you've ever done?",
-                    "What's a secret you've never told anyone?",
-                    "What's your biggest fear?",
-                    "Who in this room do you have a crush on?",
-                    "What's the biggest lie you've ever told?"
-                ],
-                dares: [
-                    "Take a selfie with the weirdest facial expression possible",
-                    "Do your best impression of another player",
-                    "Call a friend and sing them a love song",
-                    "Post something embarrassing on social media",
-                    "Dance without music for 30 seconds"
-                ]
-            },
-            Outdoor: {
-                truths: [
-                    "What's the wildest outdoor adventure you've ever been on?",
-                    "Have you ever gotten lost while hiking?",
-                    "What's your favorite outdoor activity?",
-                    "Tell a story about a camping trip gone wrong",
-                    "What's the most beautiful natural place you've ever visited?"
-                ],
-                dares: [
-                    "Do 10 jumping jacks",
-                    "Walk like a penguin for a full minute",
-                    "Find and collect 3 pieces of trash",
-                    "Do a cartwheel",
-                    "Climb a tree (safely)"
-                ]
-            }
-        };
+        <div id="choiceScreen" style="display:none;">
+            <h2>Choose:</h2>
+            <span id="choicePlayerName"></span><span id="currentQuestionNumber"></span>
+            <button id="truthButton">Truth</button>
+            <button id="dareButton">Dare</button>
+        </div>
 
-        const PASS_MESSAGES = {
-            General: "To pass this challenge, you must do a funny dance in front of everyone!",
-            Outdoor: "To pass this challenge, you must collect 3 pieces of trash from outside!"
-        };
+        <div id="questionScreen" style="display:none;">
+            <p id="questionText"></p>
+            <button id="passButton">Pass</button>
+            <button id="nextPlayerButton">Next Player</button>
+        </div>
+        <div id="passActionScreen" class="popup" style="display:none;">
+            <p id="passActionText"></p>
+        </div>
 
-        const App = () => {
-            const [screen, setScreen] = React.useState('setup');
-            const [players, setPlayers] = React.useState(['', '', '', '']);
-            const [theme, setTheme] = React.useState('General');
-            const [questionsPerPlayer, setQuestionsPerPlayer] = React.useState(10);
-            const [currentPlayerIndex, setCurrentPlayerIndex] = React.useState(0);
-            const [currentQuestionType, setCurrentQuestionType] = React.useState(null);
-            const [currentQuestion, setCurrentQuestion] = React.useState('');
-            const [questionCounts, setQuestionCounts] = React.useState({});
-            const [isPassScreen, setIsPassScreen] = React.useState(false);
 
-            const updatePlayerName = (index, name) => {
-                const newPlayers = [...players];
-                newPlayers[index] = name;
-                setPlayers(newPlayers);
-            };
+        <div id="resultsScreen" style="display:none;">
+            <h2>Results</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Truths</th>
+                        <th>Dares</th>
+                        <th>Passes</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                </tbody>
+            </table>
+        </div>
 
-            const startGame = () => {
-                const activePlayers = players.filter(player => player.trim() !== '');
-                if (activePlayers.length < 2) {
-                    alert('Please enter at least 2 player names');
-                    return;
-                }
+    </main>
+    <footer>
+        <p>Version <span id="versionNumber"></span></p>
+    </footer>
 
-                const initialQuestionCounts = {};
-                activePlayers.forEach(player => {
-                    initialQuestionCounts[player] = 0;
-                });
-                setQuestionCounts(initialQuestionCounts);
-                setCurrentPlayerIndex(0);
-                setScreen('game');
-            };
-
-            const selectQuestionType = (type) => {
-    const currentPlayer = players[currentPlayerIndex];
-    setCurrentQuestionType(type);
-    setIsPassScreen(false);
-
-    // Ensure type is correctly formatted
-    const questionKey = type.toLowerCase() + 's'; // 'truths' or 'dares'
-
-    try {
-        // Verify theme exists
-        if (!QUESTIONS[theme]) {
-            console.error(`Theme "${theme}" not found`);
-            alert(`Error: Theme "${theme}" not found`);
-            return;
-        }
-
-        // Verify questions exist for this type
-        const questions = QUESTIONS[theme][questionKey];
-        
-        if (!questions || questions.length === 0) {
-            console.error(`No ${questionKey} found for theme ${theme}`);
-            alert(`No questions available for ${type}`);
-            return;
-        }
-
-        // Select a random question
-        const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-        
-        // Ensure a question is selected
-        if (!randomQuestion) {
-            console.error('Failed to select a random question');
-            alert('Unable to select a question');
-            return;
-        }
-
-        // Set the current question
-        setCurrentQuestion(randomQuestion);
-    } catch (error) {
-        console.error('Error in selectQuestionType:', error);
-        alert('An unexpected error occurred');
-    }
-};
-
-            const handlePass = () => {
-                setIsPassScreen(true);
-            };
-
-            const nextTurn = () => {
-                const activePlayers = players.filter(player => player.trim() !== '');
-                
-                const newQuestionCounts = {...questionCounts};
-                newQuestionCounts[players[currentPlayerIndex]]++;
-
-                const allPlayersCompleted = activePlayers.every(
-                    player => newQuestionCounts[player] >= questionsPerPlayer
-                );
-
-                if (allPlayersCompleted) {
-                    setScreen('setup');
-                    return;
-                }
-
-                let nextIndex = (currentPlayerIndex + 1) % activePlayers.length;
-                
-                while (newQuestionCounts[activePlayers[nextIndex]] >= questionsPerPlayer) {
-                    nextIndex = (nextIndex + 1) % activePlayers.length;
-                }
-
-                setCurrentPlayerIndex(nextIndex);
-                setCurrentQuestionType(null);
-                setQuestionCounts(newQuestionCounts);
-                setIsPassScreen(false);
-            };
-
-            const renderSetupScreen = () => (
-                <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-                    <h2 className="text-2xl font-bold mb-4 text-center">Truth or Dare Setup</h2>
-                    <div className="space-y-4">
-                        {players.map((player, index) => (
-                            <input
-                                key={index}
-                                type="text"
-                                placeholder={`Player ${index + 1} Name`}
-                                value={player}
-                                onChange={(e) => updatePlayerName(index, e.target.value)}
-                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        ))}
-
-                        <select
-                            value={theme}
-                            onChange={(e) => setTheme(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="General">General</option>
-                            <option value="Outdoor">Outdoor</option>
-                        </select>
-
-                        <select
-                            value={questionsPerPlayer}
-                            onChange={(e) => setQuestionsPerPlayer(Number(e.target.value))}
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="10">10 Questions</option>
-                            <option value="20">20 Questions</option>
-                            <option value="40">40 Questions</option>
-                        </select>
-
-                        <button 
-                            onClick={startGame}
-                            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
-                        >
-                            Start Game
-                        </button>
-                    </div>
-                </div>
-            );
-
-            const renderGameScreen = () => (
-                <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-                    <h2 className="text-2xl font-bold mb-2 text-center">Truth or Dare</h2>
-                    <p className="text-center text-gray-600 mb-4">
-                        {players[currentPlayerIndex]}'s Turn
-                    </p>
-
-                    {!currentQuestionType ? (
-                        <div className="flex space-x-4">
-                            <button 
-                                onClick={() => selectQuestionType('Truth')}
-                                className="w-1/2 py-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition duration-300"
-                            >
-                                Truth
-                            </button>
-                            <button 
-                                onClick={() => selectQuestionType('Dare')}
-                                className="w-1/2 py-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition duration-300"
-                            >
-                                Dare
-                            </button>
-                        </div>
-                    ) : isPassScreen ? (
-                        <div>
-                            <p className="text-center mb-4 font-semibold text-red-600">
-                                {PASS_MESSAGES[theme]}
-                            </p>
-                            <div className="flex space-x-4">
-                                <button 
-                                    onClick={() => setIsPassScreen(false)}
-                                    className="w-1/2 py-3 border rounded-md bg-gray-50 hover:bg-gray-100 transition duration-300"
-                                >
-                                    Back
-                                </button>
-                                <button 
-                                    onClick={nextTurn}
-                                    className="w-1/2 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div>
-                            <p className="mb-4 text-center font-semibold">{currentQuestionType}:</p>
-                            <p className="text-center mb-4 min-h-[100px]">{currentQuestion}</p>
-                            <div className="flex space-x-4">
-                                <button 
-                                    onClick={handlePass}
-                                    className="w-1/2 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
-                                >
-                                    Pass
-                                </button>
-                                <button 
-                                    onClick={nextTurn}
-                                    className="w-1/2 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-
-            return (
-                <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-                    {screen === 'setup' ? renderSetupScreen() : renderGameScreen()}
-                </div>
-            );
-        };
-
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
+    <script src="theme-manager.js"></script>
+    <script src="game-manager.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
